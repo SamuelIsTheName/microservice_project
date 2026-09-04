@@ -1,6 +1,8 @@
 package com.example.product.ProductServiceTest;
 
 import com.example.product.dto.CreateProductRequest;
+import com.example.product.dto.InventoryResponse;
+import com.example.product.dto.ProductDetailsResponse;
 import com.example.product.exception.ProductNotFoundException;
 import com.example.product.model.Product;
 import com.example.product.repository.ProductRepository;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -25,6 +28,9 @@ public class ServiceTest {
 
     @Mock
     private ProductRepository repository;
+
+    @Mock
+    private RestTemplate restTemplate;
 
     @InjectMocks
     private ProductService productService;
@@ -79,4 +85,22 @@ public class ServiceTest {
 
         verify(repository).findById(productId);
     }
+
+    @Test
+    void getProductDetails_shouldCombineProductAndInventory() {
+        Product product = new Product( 1L, "Laptop", new BigDecimal("1200.00") );
+        InventoryResponse inventory = new InventoryResponse( 1L, 20 );
+
+        when(repository.findById(1L)) .thenReturn(Optional.of(product));
+        when(restTemplate.getForObject( "http://localhost:8082/inventory/1", InventoryResponse.class )).thenReturn(inventory);
+
+        ProductDetailsResponse result = productService.getProductDetails(1L);
+
+        assertEquals(1L, result.getId());
+        assertEquals("Laptop", result.getName());
+        assertEquals(new BigDecimal("1200.00"), result.getPrice());
+        assertEquals(20, result.getQuantity());
+
+        verify(repository).findById(1L);
+        verify(restTemplate).getForObject( "http://localhost:8082/inventory/1", InventoryResponse.class ); }
 }

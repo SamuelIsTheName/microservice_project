@@ -1,6 +1,7 @@
 package com.example.product.controller;
 
 import com.example.product.dto.CreateProductRequest;
+import com.example.product.dto.ProductDetailsResponse;
 import com.example.product.model.Product;
 import com.example.product.service.ProductService;
 import jakarta.validation.Valid;
@@ -38,5 +39,10 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(){
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ProductDetailsResponse> getProductDetails(@PathVariable Long id){
+        return ResponseEntity.ok(productService.getProductDetails(id));
     }
 }
