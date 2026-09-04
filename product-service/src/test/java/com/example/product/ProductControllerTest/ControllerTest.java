@@ -73,7 +73,7 @@ public class ControllerTest {
                         """))
                 .andExpect(status().isBadRequest());
     }
-    
+
 
     @Test
     void getProductById_shouldReturn200() throws Exception {
