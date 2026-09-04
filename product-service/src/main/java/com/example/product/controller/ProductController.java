@@ -32,7 +32,7 @@ public class ProductController {
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
         Product foundProduct=productService.getProductById(id);
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(foundProduct);
+        return ResponseEntity.ok(foundProduct);
     }
 
     @GetMapping
